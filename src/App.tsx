@@ -1,56 +1,49 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import React, { useState } from "react";
+import { useDispatch, useSelector} from "react-redux";
+import "./App.css";
+import { RootState } from "./app/store";
+import CustomerOrder from "./conponents/CustomerOrder";
+import Reservation from "./conponents/Reservation";
+import { addReservation } from "./features/ReservationSlice";
 
 function App() {
+  const [reservation, setReservation] = useState("");
+
+  const dispatch = useDispatch();
+  const customer = useSelector((state: RootState) => state.customer.value)
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="container">
+      <h2 className="container__text">Customer food order app</h2>
+      <div className="container__item">
+        <div>
+          <Reservation />
+          <input
+            type="text"
+            value={reservation}
+            onChange={(e) => setReservation(e.target.value)}
+          />
+          <button
+            onClick={() => {
+              if (!reservation) return;
+              dispatch(addReservation(reservation));
+              setReservation("");
+            }}
           >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
+            Add Reservation
+          </button>
+        </div>
+
+        <div>
+         {
+           customer.map((customer)=>{
+             return (
+               <CustomerOrder id={customer.id} name= {customer.name} food={customer.food}/>
+             )
+           })
+         }
+          
+        </div>
+      </div>
     </div>
   );
 }
